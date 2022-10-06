@@ -1,0 +1,14 @@
+Package: lab6
+Type: Package
+Title: knapsack with three function
+Version: 0.1.0
+Authors@R:
+ c( person("hamza", "munir", , "hamzamunir00@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID")), 
+            person("collinsk", "linsmann", , "collinsklinsmann@gmail.com", role = "ctb",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+           )
+Description: knapsack helps us to chose possible maximum things.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
