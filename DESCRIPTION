@@ -12,3 +12,5 @@ Description: knapsack helps us to chose possible maximum things.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+URL: https://github.com/Hammu144/lab6
+BugReports: https://github.com/Hammu144/lab6/issues
