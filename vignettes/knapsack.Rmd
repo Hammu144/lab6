@@ -1,0 +1,69 @@
+---
+title: "knapsack"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{knapsack}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+# Description 
+
+This package is use for three different  methods to use knapsack problem.
+In first one we use Bruce force which we do with the help of by making subsets.
+second methods is we do with the help of dynamic where we do this with the help of iteration.
+Third one is greedy method.
+
+
+
+```{r setup}
+library(lab6)
+```
+# Brute Force Knapsack
+This function we use to find maximum value with the help of making subsets. function gave us max value and elements as well.
+we also use paralization as well in the function which makes the ncores and subsetin we enhance our processing as well.
+
+## Question 1
+### *How much time does it take to run brute_force_knapsack for n = 16 objects?*
+Brute force computation is slow because loop has go through all the values and will check it if it woks fine or not it will check the possible values to calculate the max value and the time complexity of the algorithm is O(2^n).
+
+This is for non paraliation.
+
+  user       system       elapsed 
+  0.846      0.192        1.863 
+  
+```{r, eval=FALSE}
+
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
+n <- 2000
+knapsack_objects <-
+data.frame(
+w=sample(1:4000, size = n, replace = TRUE),
+v=runif(n = n, 0, 10000)
+)
+system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000))
+```
+
+for parallization
+ user                  system                 elapsed 
+  0.683                0.139                   1.560 
+
+
+As we can see paralizzation gives us best one.
+```{r, eval=FALSE}
+
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
+n <- 2000
+knapsack_objects <-
+data.frame(
+w=sample(1:4000, size = n, replace = TRUE),
+v=runif(n = n, 0, 10000)
+)
+system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000), TRUE)
+```
