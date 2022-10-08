@@ -46,8 +46,10 @@ brute_force_knapsack <-function(x, W, parallel = FALSE){
 
     filtration <- function(x){
       bin_value <- intToBits(unlist(x))[1:num_of_obj]
-      weight_sum <- sum(weight_vec[which(bin_value  == 1)])
-      value_sum <- sum(value_vec[which(bin_value  == 1)])
+      weight_slection <- weight_vec[which(bin_value  == 1)]
+      weight_sum <- sum(weight_slection)
+      value_selection <- value_vec[which(bin_value  == 1)]
+      value_sum <- sum(value_selection)
       return(list(bin_value  = bin_value , weight_sum = weight_sum, value_sum = value_sum))
     }
     new_matrix <- sapply(1:no_of_sub_set, filtration)
@@ -56,8 +58,10 @@ brute_force_knapsack <-function(x, W, parallel = FALSE){
 
     filtration <- function(x){
       bin_value <- intToBits(unlist(x))[1:num_of_obj]
-      weight_sum <- sum(weight_vec[which(bin_value  == 1)])
-      value_sum <- sum(value_vec[which(bin_value  == 1)])
+      weight_slection <- weight_vec[which(bin_value  == 1)]
+      weight_sum <- sum(weight_slection)
+      value_selection <- value_vec[which(bin_value  == 1)]
+      value_sum <- sum(value_selection)
       return(list(bin_value  = bin_value , weight_sum = weight_sum, value_sum = value_sum))
     }
 
@@ -78,5 +82,3 @@ brute_force_knapsack <-function(x, W, parallel = FALSE){
 
   return(list(value = max_value,  elements = as.numeric(row.names(final_list))))
 }
-
-
