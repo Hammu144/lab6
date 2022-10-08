@@ -14,3 +14,4 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/Hammu144/lab6
 BugReports: https://github.com/Hammu144/lab6/issues
+RoxygenNote: 7.2.1
