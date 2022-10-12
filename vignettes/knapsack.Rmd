@@ -67,3 +67,31 @@ v=runif(n = n, 0, 10000)
 )
 system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000), TRUE)
 ```
+# knapsack Dynamic
+we use another way to calculate the max value and its index with the help of knapsack dynamic.
+
+
+
+## Question 2
+### *How much time does it take to run knapsack_dynamic with n = 500 objects?*
+
+This is discret way of solving problem we use a function into function and then used one while loop 
+which gives us O(n*W) time complicity.
+
+for specific number we are going to run sys time check
+
+we get   
+   user      system          elapsed 
+  1.509      0.033            1.586 
+
+```{r, eval=FALSE}
+
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
+n <- 2000
+knapsack_objects <-
+data.frame(
+w=sample(1:4000, size = n, replace = TRUE),
+v=runif(n = n, 0, 10000)
+)
+system.time(knapsack_dynamic(knapsack_objects[1:500, ], 2000))
+```
