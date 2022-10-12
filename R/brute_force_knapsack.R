@@ -22,9 +22,9 @@ brute_force_knapsack <-function(x, W, parallel = FALSE){
   stopifnot(is.numeric(W))
   stopifnot(W>= 0)
 
-  stopifnot(sort(names(x)) == c("v", "w"))
-  stopifnot(x$v > 0)
-  stopifnot(x$w > 0)
+  stopifnot(all(sort(names(x)) == c("v", "w")))
+  stopifnot(all(x$v > 0))
+  stopifnot(all(x$w > 0))
 
 
 

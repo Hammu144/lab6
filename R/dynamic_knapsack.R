@@ -13,8 +13,8 @@
 #'   w=sample(1:4000, size = n, replace = TRUE),
 #'   v=runif(n = n, 0, 10000)
 #' )
-#' knapsack_dynamic(x = knapsack_objects[1:8,], W = 3500)
-knapsack_dynamic <- function(x, W){
+#' dynamic_knapsack(x = knapsack_objects[1:8,], W = 3500)
+dynamic_knapsack <- function(x, W){
 
   stopifnot(is.data.frame(x))
   stopifnot(is.numeric(W))
