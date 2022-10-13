@@ -1,5 +1,5 @@
 #' Brute without para
-#'
+#' @description max weight with values.
 #' @param x is a data frame
 #' @param W is a integer
 #'

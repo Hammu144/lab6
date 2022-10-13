@@ -15,7 +15,7 @@ brute_without_para(x, W)
 will return a list
 }
 \description{
-Brute without para
+max weight with values.
 }
 \examples{
 set.seed(42)
