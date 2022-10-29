@@ -33,11 +33,10 @@ we also use paralization as well in the function which makes the ncores and subs
 ### *How much time does it take to run brute_force_knapsack for n = 16 objects?*
 Brute force computation is slow because loop has go through all the values and will check it if it woks fine or not it will check the possible values to calculate the max value and the time complexity of the algorithm is O(2^n).
 
-This is for non paraliation.
 
-  user       system       elapsed 
-  0.846      0.192        1.863 
-  
+we will get thi time when we run code
+ user  system elapsed 
+  0.799   0.129   1.540 
 ```{r, eval=FALSE}
 
 set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
@@ -50,23 +49,7 @@ v=runif(n = n, 0, 10000)
 system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000))
 ```
 
-for parallization
- user                  system                 elapsed 
-  0.683                0.139                   1.560 
 
-
-As we can see paralizzation gives us best one.
-```{r, eval=FALSE}
-
-set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
-n <- 2000
-knapsack_objects <-
-data.frame(
-w=sample(1:4000, size = n, replace = TRUE),
-v=runif(n = n, 0, 10000)
-)
-system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000), TRUE)
-```
 # knapsack Dynamic
 we use another way to calculate the max value and its index with the help of knapsack dynamic.
 
@@ -95,3 +78,219 @@ v=runif(n = n, 0, 10000)
 )
 system.time(knapsack_dynamic(knapsack_objects[1:500, ], 2000))
 ```
+
+
+
+
+## Question 3
+### *How much time does it take to run greedy_knapsack on n = 1000000 objects?*
+greedy from all is best one the other. it has O(n) complexcity. even greedy result is not optimal.
+
+running with n = 100000 is as follow.
+
+```{r, eval=FALSE}
+suppressWarnings(RNGversion(min("3.5.3", as.character(getRversion()))))
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
+knapsack_big <- data.frame(w = sample(1:4000, size = 1000000, replace = TRUE),
+                               v = runif(n = 1000000, 0, 10000))
+system.time(greedy_knapsack(knapsack_big, 2000))
+```
+
+
+   user  system elapsed 
+  0.683   0.139   1.560 
+Show in New Window
+   user  system elapsed 
+  2.835   0.392   3.279 
+
+## Question 4
+### *What performance gain could you get by trying to optimize your code?*
+for this we check bottlenecks first. just to avoid line of codes we identify but in real doesn't matter.
+by profvis package we check bottlenecks.
+
+```{r, eval=FALSE}
+profvis::profvis({brute_without_para <- function(x, W) {
+  stopifnot(is.data.frame(x))
+  stopifnot(is.numeric(W))
+  stopifnot(W>= 0)
+
+  stopifnot(all(sort(names(x)) == c("v", "w")))
+  stopifnot(all(x$v > 0))
+  stopifnot(all(x$w > 0))
+
+
+  n <- length(x$v | x$w)
+  selected_elements <- c()
+  value <- c()
+  for (i in 1:(2^n)) {
+    items <- as.vector(which(intToBits(i)==1))
+    for (j in 1:length(items)) {
+      selected_weight <- knapsack_objects$w[items][j]
+    }
+    if(selected_weight < W){
+      for (k in 1:length(items)) {
+        selected_value <- knapsack_objects$v[items][k]
+      }
+      value <- append(value, selected_value)
+      selected_elements <- append(selected_elements, items)
+    }
+  }
+
+
+  max_value <- max(selected_value)
+  ind <- which(value == max_value)
+  ele <- selected_elements[ind]
+  return(output <- list(value = round(max_value), elements = ele))
+}
+
+ brute_without_para(knapsack_objects[1:8, ], 2000)
+})
+
+```
+from output we see two for take time for excution then other things.
+
+after we try to improve code and saw things that we other way when we try them with the help of sapply.
+
+
+```{r, eval=FALSE}
+profvis::profvis({brute_force_knapsack <-function(x, W, parallel = FALSE){
+
+  stopifnot(is.data.frame(x))
+  stopifnot(is.numeric(W))
+  stopifnot(W>= 0)
+
+  stopifnot(all(sort(names(x)) == c("v", "w")))
+  stopifnot(all(x$v > 0))
+  stopifnot(all(x$w > 0))
+
+
+
+  num_of_obj <- length(x$v | x$w)
+  no_of_sub_set <- 2^(num_of_obj)
+
+
+  weight_vec <- x$w
+  value_vec <- x$v
+
+
+  no_of_cores <- parallel::detectCores()
+  no_of_cores <- 2
+  clust <- parallel::makeCluster(no_of_cores)
+
+
+  if(parallel == FALSE){
+
+
+    filtration <- function(x){
+      bin_value <- intToBits(unlist(x))[1:num_of_obj]
+      weight_slection <- weight_vec[which(bin_value  == 1)]
+      weight_sum <- sum(weight_slection)
+      value_selection <- value_vec[which(bin_value  == 1)]
+      value_sum <- sum(value_selection)
+      return(list(bin_value  = bin_value , weight_sum = weight_sum, value_sum = value_sum))
+    }
+    new_matrix <- sapply(1:no_of_sub_set, filtration)
+
+  }else{
+
+    filtration <- function(x){
+      bin_value <- intToBits(unlist(x))[1:num_of_obj]
+      weight_slection <- weight_vec[which(bin_value  == 1)]
+      weight_sum <- sum(weight_slection)
+      value_selection <- value_vec[which(bin_value  == 1)]
+      value_sum <- sum(value_selection)
+      return(list(bin_value  = bin_value , weight_sum = weight_sum, value_sum = value_sum))
+    }
+
+    new_matrix <- parallel::parSapply(clust, 1:no_of_sub_set, filtration)
+    parallel::stopCluster(clust)
+  }
+
+  value_sum <- as.numeric( new_matrix["value_sum", ])
+  weight_sum <- as.numeric( new_matrix["weight_sum", ])
+  bin_value <-  new_matrix["bin_value", ]
+
+
+  max_value <- max(value_sum[which(weight_sum <= W)])
+  value_sum[which(weight_sum > W)] <- 0
+  ith_max_value <- which(value_sum == max_value)[1]
+  final_list <- x[bin_value[[ith_max_value]] == 1, ]
+
+
+  return(list(value = max_value,  elements = as.numeric(row.names(final_list))))
+}
+
+ brute_force_knapsack(knapsack_objects[1:8, ], 2000)
+})
+
+```
+from changing we can see improvement in the code. from data frame to working with vector we saw inprovement in code.
+
+```{r, eval = FALSE}
+system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000))
+```
+```{r, eval = FALSE}
+system.time( brute_without_para(knapsack_objects[1:8, ], 2000))
+```
+
+#brute force para 
+  user  system elapsed 
+  0.934   0.148   1.899 
+ #without
+   user  system elapsed 
+  0.022   0.015   0.011 
+ 
+
+if we compare time version of both function we saw improvement.
+
+if we compare we can see the improvement.
+
+also try with other function because of not having bottleneck. myabe because algorithum are much efficient to start with. 
+
+## Question 5
+### *What performance gain could you get by parallzling brute force search?*
+
+for parallzling try with package to work with the help of num of core.
+
+
+This is for non paraliation. 
+
+  user       system       elapsed 
+  0.846      0.192        1.863 
+  
+```{r, eval=FALSE}
+
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
+n <- 2000
+knapsack_objects <-
+data.frame(
+w=sample(1:4000, size = n, replace = TRUE),
+v=runif(n = n, 0, 10000)
+)
+system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000))
+```
+
+for parallization
+ user                  system                 elapsed 
+  0.683                0.139                   1.560 
+
+
+As we can see paralizzation gives us best one.
+
+```{r, eval=FALSE}
+
+set.seed(42, kind = "Mersenne-Twister", normal.kind = "Inversion")
+n <- 2000
+knapsack_objects <-
+data.frame(
+w=sample(1:4000, size = n, replace = TRUE),
+v=runif(n = n, 0, 10000)
+)
+system.time(brute_force_knapsack(knapsack_objects[1:16, ], 2000), TRUE)
+```
+
+we saw the differece even tho having lappy and vapply we see it give good version on Mac machine.
+we used mac for our testing and after using parall packafge we saw improvement in the time better for our performs.
+so para is good then without para.
+
+

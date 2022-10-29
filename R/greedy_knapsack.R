@@ -31,6 +31,7 @@ greedy_knapsack <-
     value_vec <- x$v
 
 
+
     ratio <-  value_vec /  weight_vec
     sorting <- sort(ratio, decreasing = TRUE)
     e = rep(0, n)
@@ -39,7 +40,7 @@ greedy_knapsack <-
 
     for(i in  sorting){
 
-      num <- which( sorting == i)[1]
+      num <- which( ratio == i)[1]
 
       if (weight_vec[num] <= current){
 
